@@ -1,0 +1,37 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fondo con esquinas redondeadas -->
+  <rect width="512" height="512" rx="64" fill="#722F37"/>
+  
+  <!-- Cuerpo principal del bus -->
+  <rect x="80" y="180" width="352" height="140" rx="20" fill="#ffffff"/>
+  
+  <!-- Techo del bus -->
+  <rect x="100" y="140" width="312" height="50" rx="25" fill="#ffffff"/>
+  
+  <!-- Ventanas del bus -->
+  <rect x="110" y="200" width="60" height="50" rx="8" fill="#722F37"/>
+  <rect x="190" y="200" width="60" height="50" rx="8" fill="#722F37"/>
+  <rect x="270" y="200" width="60" height="50" rx="8" fill="#722F37"/>
+  <rect x="350" y="200" width="60" height="50" rx="8" fill="#722F37"/>
+  
+  <!-- Puerta del bus -->
+  <rect x="100" y="270" width="40" height="50" rx="4" fill="#722F37"/>
+  <line x1="120" y1="280" x2="120" y2="310" stroke="#ffffff" stroke-width="2"/>
+  
+  <!-- Ruedas -->
+  <circle cx="140" cy="350" r="30" fill="#2d2d2d"/>
+  <circle cx="140" cy="350" r="20" fill="#4a4a4a"/>
+  <circle cx="372" cy="350" r="30" fill="#2d2d2d"/>
+  <circle cx="372" cy="350" r="20" fill="#4a4a4a"/>
+  
+  <!-- Faros delanteros -->
+  <circle cx="420" cy="220" r="12" fill="#ffd700"/>
+  <circle cx="420" cy="260" r="12" fill="#ffd700"/>
+  
+  <!-- Parachoques -->
+  <rect x="430" y="200" width="8" height="80" rx="4" fill="#c0c0c0"/>
+  
+  <!-- Detalles laterales -->
+  <rect x="80" y="240" width="352" height="4" fill="#722F37"/>
+  <rect x="80" y="280" width="352" height="4" fill="#722F37"/>
+</svg>
