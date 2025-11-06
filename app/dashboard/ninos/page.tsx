@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -28,7 +28,7 @@ interface Passenger {
   representative?: Representative
 }
 
-export default function NinosPage() {
+function NinosPageContent() {
   const searchParams = useSearchParams()
   const representativeId = searchParams.get('representante')
   const [passengers, setPassengers] = useState<Passenger[]>([])
@@ -48,6 +48,7 @@ export default function NinosPage() {
     if (representativeId) {
       setShowForm(true)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [representativeId])
 
   async function loadData() {
@@ -299,6 +300,18 @@ export default function NinosPage() {
         ))}
       </div>
     </div>
+  )
+}
+
+export default function NinosPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-[400px]">
+        <p>Cargando...</p>
+      </div>
+    }>
+      <NinosPageContent />
+    </Suspense>
   )
 }
 

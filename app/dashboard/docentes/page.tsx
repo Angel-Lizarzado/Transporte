@@ -29,6 +29,7 @@ export default function DocentesPage() {
 
   useEffect(() => {
     loadPassengers()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   async function loadPassengers() {

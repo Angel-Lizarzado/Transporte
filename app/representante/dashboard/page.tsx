@@ -55,6 +55,7 @@ export default function RepresentanteDashboardPage() {
   useEffect(() => {
     loadData()
     loadDollarRate()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   async function loadDollarRate() {

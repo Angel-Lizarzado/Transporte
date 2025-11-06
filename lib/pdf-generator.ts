@@ -46,10 +46,10 @@ export async function generateReceiptPDF(data: ReceiptData) {
   let yPos = margin
 
   // Color vinotinto
-  const vinotintoColor = [51, 0, 0]
+  const vinotintoColor: [number, number, number] = [51, 0, 0]
 
   // Encabezado
-  doc.setFillColor(...vinotintoColor)
+  doc.setFillColor(vinotintoColor[0], vinotintoColor[1], vinotintoColor[2])
   doc.rect(0, 0, pageWidth, 40, 'F')
   
   doc.setTextColor(255, 255, 255)
@@ -139,7 +139,7 @@ export async function generateReceiptPDF(data: ReceiptData) {
   )
   yPos += 6
   doc.setFont('helvetica', 'bold')
-  doc.setTextColor(...vinotintoColor)
+  doc.setTextColor(vinotintoColor[0], vinotintoColor[1], vinotintoColor[2])
   doc.text(
     `Deuda Actual: ${formatCurrency(data.currentDebt, 'USD')} (${formatCurrency(data.currentDebt * data.dollarRate, 'BSF')})`,
     margin,

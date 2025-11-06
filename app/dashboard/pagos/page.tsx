@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -30,7 +30,7 @@ interface Transaction {
   representative?: Representative
 }
 
-export default function PagosPage() {
+function PagosPageContent() {
   const searchParams = useSearchParams()
   const representativeId = searchParams.get('representante')
   const [transactions, setTransactions] = useState<Transaction[]>([])
@@ -52,6 +52,7 @@ export default function PagosPage() {
     if (representativeId) {
       setShowForm(true)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [representativeId])
 
   async function loadDollarRate() {
@@ -443,6 +444,18 @@ export default function PagosPage() {
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+export default function PagosPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-[400px]">
+        <p>Cargando...</p>
+      </div>
+    }>
+      <PagosPageContent />
+    </Suspense>
   )
 }
 

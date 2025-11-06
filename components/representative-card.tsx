@@ -27,6 +27,7 @@ export function RepresentativeCard({ representative }: { representative: Represe
   useEffect(() => {
     loadDebt()
     loadDollarRate()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [representative.id])
 
   async function loadDollarRate() {

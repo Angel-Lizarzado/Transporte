@@ -31,6 +31,7 @@ export default function RepresentantesPage() {
 
   useEffect(() => {
     loadRepresentatives()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   async function loadRepresentatives() {
