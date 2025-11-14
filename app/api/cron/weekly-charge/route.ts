@@ -1,146 +1,219 @@
-import { NextResponse } from 'next/server'
-import { createServiceClient } from '@/lib/supabase/service'
+import { NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
+import dayjs from "dayjs";
 
-export const dynamic = 'force-dynamic' // Desactiva el cacheo
+export async function POST(req: Request) {
+  const startTime = Date.now();
 
-export async function POST(request: Request) {
   try {
-    // Verificar secreto del cron
-    const authHeader = request.headers.get('authorization')
-    const cronSecret = process.env.CRON_SECRET
-
-    if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
-      return new Response(
-        JSON.stringify({ error: 'No autorizado' }), 
-        { 
-          status: 401,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      )
+    // ------------------------
+    // 1. Auth con CRON_SECRET
+    // ------------------------
+    const auth = req.headers.get("authorization");
+    if (!auth?.startsWith("Bearer ")) {
+      return NextResponse.json({ error: "No auth header" }, { status: 401 });
     }
 
-    const supabase = createServiceClient()
-
-    // Obtener todas las organizaciones
-    const { data: organizations, error: orgError } = await supabase
-      .from('organizations')
-      .select('id')
-
-    if (orgError) {
-      throw orgError
+    if (auth.split(" ")[1] !== process.env.CRON_SECRET) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
-    if (!organizations) {
-      return NextResponse.json({ message: 'No hay organizaciones' })
-    }
+    // ------------------------
+    // 2. Supabase cliente
+    // ------------------------
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
 
-    const now = new Date()
-    const results = []
+    console.log("Supabase client creado");
 
-    for (const org of organizations) {
+    // ------------------------
+    // 3. Obtener organizaciones
+    // ------------------------
+    const { data: orgs, error: orgErr } = await supabase
+      .from("organizations")
+      .select("id, created_by");
+
+    if (orgErr) throw orgErr;
+
+    for (const org of orgs) {
+      const orgId = org.id;
+
+      // ------------------------
+      // 4. Obtener app_config
+      // ------------------------
+      const { data: config } = await supabase
+        .from("app_config")
+        .select("*")
+        .eq("organization_id", orgId)
+        .single();
+
+      const lastApplied = config?.last_weekly_charge_applied;
+
+      // ------------------------
+      // 5. Verificar si ya se aplicó esta semana
+      // ------------------------
+      const alreadyApplied =
+        lastApplied &&
+        dayjs(lastApplied).isAfter(dayjs().startOf("week"));
+
+      // logs base
+      const jsonLog: any = {
+        org_id: orgId,
+        executed_at: new Date().toISOString(),
+        status: alreadyApplied ? "skipped" : "success",
+        total: 0,
+        passengers: [],
+      };
+
+      let textLog = `
+=== WEEKLY CHARGE REPORT ===
+📅 Fecha: ${dayjs().format("YYYY-MM-DD HH:mm")}
+🏢 Organización: ${orgId}
+`;
+
+      if (alreadyApplied) {
+        textLog += `
+⛔ YA APLICADO ESTA SEMANA  
+Se saltó esta organización porque ya tenía cargos registrados esta semana.
+
+-------------------------------------------
+Estado final: ⏭ Saltado
+-------------------------------------------
+`;
+
+        await supabase.from("cron_logs").insert({
+          org_id: orgId,
+          result: textLog.trim(),
+          result_json: jsonLog,
+          status: "skipped",
+        });
+
+        console.log(`⚠ Ya aplicado esta semana en ${orgId}, salto.`);
+        continue;
+      }
+
+      // ------------------------
+      // 6. Obtener pasajeros activos
+      // ------------------------
+      const { data: passengers, error: pErr } = await supabase
+        .from("passengers")
+        .select("*")
+        .eq("organization_id", orgId)
+        .eq("activo", true);
+
+      if (pErr) throw pErr;
+
+      textLog += `\n🧒 Pasajeros procesados:\n`;
+
+      const appliedTransactions = [];
+      let total = 0;
+
       try {
-        // Obtener configuración
-        const { data: config } = await supabase
-          .from('app_config')
-          .select('*')
-          .eq('organization_id', org.id)
-          .single()
+        // ------------------------
+        // 7. Procesar cada pasajero
+        // ------------------------
+        for (const p of passengers) {
+          const rate =
+            p.tarifa_personalizada ??
+            p.tarifa_semanal_usd ??
+            config.tarifa_general_usd ??
+            0;
 
-        if (!config) continue
+          if (rate <= 0) continue;
 
-        const tarifaGeneral = config.tarifa_general_usd || 0
+          total += Number(rate);
 
-        // Obtener todos los representantes
-        const { data: representatives } = await supabase
-          .from('representatives')
-          .select('id')
-          .eq('organization_id', org.id)
+          // Crear transacción
+          await supabase.from("transactions").insert({
+            id: crypto.randomUUID(),
+            organization_id: orgId,
+            representante_id: p.representante_id,
+            fecha: new Date().toISOString(),
+            tipo: "cargo",
+            monto_usd: rate,
+            concepto: `Cargo semanal para ${p.nombre}`,
+            created_by: org.created_by,
+          });
 
-        if (!representatives) continue
+          appliedTransactions.push({
+            passenger_id: p.id,
+            name: p.nombre,
+            rate,
+          });
 
-        for (const rep of representatives) {
-          // Obtener niños activos del representante
-          const { data: passengers } = await supabase
-            .from('passengers')
-            .select('tarifa_personalizada, tarifa_semanal_usd')
-            .eq('representante_id', rep.id)
-            .eq('tipo', 'niño')
-            .eq('activo', true)
-
-          if (!passengers || passengers.length === 0) continue
-
-          // Calcular monto semanal
-          let montoSemanal = 0
-          passengers.forEach((passenger) => {
-            const fee =
-              passenger.tarifa_personalizada ||
-              passenger.tarifa_semanal_usd ||
-              tarifaGeneral
-            montoSemanal += fee
-          })
-
-          if (montoSemanal > 0) {
-            // Crear transacción de cargo semanal
-            const { error: txError } = await supabase
-              .from('transactions')
-              .insert({
-                organization_id: org.id,
-                representante_id: rep.id,
-                fecha: now.toISOString(),
-                tipo: 'cargo',
-                monto_usd: montoSemanal,
-                concepto: 'Cargo semanal',
-                notas: `Cargo semanal aplicado el ${now.toLocaleDateString('es-VE')}`,
-                created_by: config.updated_by, // Usar el último usuario que actualizó la configuración
-              })
-
-            if (txError) {
-              console.error(
-                `Error creando transacción para representante ${rep.id}:`,
-                txError
-              )
-            } else {
-              results.push({
-                organization_id: org.id,
-                representative_id: rep.id,
-                amount: montoSemanal,
-                status: 'success',
-              })
-            }
-          }
+          textLog += ` - ${p.nombre} → $${rate}\n`;
         }
 
-        // Actualizar fecha de última carga semanal
+        // ------------------------
+        // 8. Actualizar last_weekly_charge_applied
+        // ------------------------
         await supabase
-          .from('app_config')
+          .from("app_config")
           .update({
-            last_weekly_charge_applied: now.toISOString(),
-            updated_at: now.toISOString(),
+            last_weekly_charge_applied: new Date().toISOString(),
           })
-          .eq('organization_id', org.id)
-      } catch (error) {
-        console.error(`Error procesando organización ${org.id}:`, error)
-        results.push({
-          organization_id: org.id,
-          status: 'error',
-          error: error instanceof Error ? error.message : 'Error desconocido',
-        })
+          .eq("organization_id", orgId);
+
+        textLog += `
+💰 Total cobrado esta semana: $${total}
+
+-------------------------------------------
+Estado final: ✅ Success
+-------------------------------------------
+`;
+
+        jsonLog.passengers = appliedTransactions;
+        jsonLog.total = total;
+
+        // Guardar log
+        await supabase.from("cron_logs").insert({
+          org_id: orgId,
+          result: textLog.trim(),
+          result_json: jsonLog,
+          status: "success",
+        });
+      } catch (e: any) {
+        // ------------------------
+        // 9. ROLLBACK COMPLETO DE HOY
+        // ------------------------
+        await supabase
+          .from("transactions")
+          .delete()
+          .eq("organization_id", orgId)
+          .eq("tipo", "cargo")
+          .gte("fecha", dayjs().startOf("day").toISOString());
+
+        textLog += `
+❌ ERROR DURANTE EL PROCESO
+Motivo: ${e.message}
+
+🔄 Rollback realizado (transacciones de hoy removidas)
+`;
+
+        jsonLog.status = "error";
+        jsonLog.error = e.message;
+
+        await supabase.from("cron_logs").insert({
+          org_id: orgId,
+          result: textLog.trim(),
+          result_json: jsonLog,
+          status: "error",
+          error_detail: e.message,
+        });
+
+        continue;
       }
     }
 
-    return NextResponse.json({
-      message: 'Carga semanal completada',
-      timestamp: now.toISOString(),
-      results,
-    })
-  } catch (error: any) {
-    console.error('Error en carga semanal:', error)
+    console.log("=== CRON COMPLETED ===");
     return NextResponse.json(
-      { error: 'Error al procesar carga semanal', details: error.message },
-      { status: 500 }
-    )
+      { ok: true, time_ms: Date.now() - startTime },
+      { status: 200 }
+    );
+  } catch (error: any) {
+    console.error("CRON ERROR:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
-
