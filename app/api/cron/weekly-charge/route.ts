@@ -1,16 +1,23 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/service'
 
-export async function POST(request: NextRequest) {
+export const dynamic = 'force-dynamic' // Desactiva el cacheo
+
+export async function POST(request: Request) {
   try {
     // Verificar secreto del cron
     const authHeader = request.headers.get('authorization')
     const cronSecret = process.env.CRON_SECRET
 
     if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
-      return NextResponse.json(
-        { error: 'No autorizado' },
-        { status: 401 }
+      return new Response(
+        JSON.stringify({ error: 'No autorizado' }), 
+        { 
+          status: 401,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
       )
     }
 
