@@ -146,7 +146,7 @@ async function getDashboardData(organizationId: string) {
 
   // Construir array de deudores, incluyendo docentes (los que usan passenger.id)
   const debtors: Array<{ id: string; name: string; debt: number }> = []
-  for (const [id, { name, debt }] of debtMap.entries()) {
+  for (const [id, { name, debt }] of Array.from(debtMap.entries())) {
     if (debt > 0) debtors.push({ id, name, debt })
   }
   debtors.sort((a, b) => b.debt - a.debt)
