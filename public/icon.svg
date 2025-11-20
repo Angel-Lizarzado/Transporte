@@ -2,36 +2,74 @@
   <!-- Fondo con esquinas redondeadas -->
   <rect width="512" height="512" rx="64" fill="#722F37"/>
   
-  <!-- Cuerpo principal del bus -->
-  <rect x="80" y="180" width="352" height="140" rx="20" fill="#ffffff"/>
+  <!-- Cuerpo principal del minibus (vista lateral) -->
+  <rect x="80" y="200" width="360" height="120" rx="12" fill="#ffffff"/>
   
-  <!-- Techo del bus -->
-  <rect x="100" y="140" width="312" height="50" rx="25" fill="#ffffff"/>
+  <!-- Techo del minibus -->
+  <path d="M 100 200 L 120 160 L 400 160 L 420 200 Z" fill="#ffffff"/>
   
-  <!-- Ventanas del bus -->
-  <rect x="110" y="200" width="60" height="50" rx="8" fill="#722F37"/>
-  <rect x="190" y="200" width="60" height="50" rx="8" fill="#722F37"/>
-  <rect x="270" y="200" width="60" height="50" rx="8" fill="#722F37"/>
-  <rect x="350" y="200" width="60" height="50" rx="8" fill="#722F37"/>
+  <!-- Capó delantero -->
+  <path d="M 80 240 L 80 200 L 100 200 L 100 240 Z" fill="#e8e8e8"/>
   
-  <!-- Puerta del bus -->
-  <rect x="100" y="270" width="40" height="50" rx="4" fill="#722F37"/>
-  <line x1="120" y1="280" x2="120" y2="310" stroke="#ffffff" stroke-width="2"/>
+  <!-- Ventanas laterales -->
+  <rect x="130" y="180" width="70" height="50" rx="6" fill="#660000" opacity="0.3"/>
+  <rect x="220" y="180" width="70" height="50" rx="6" fill="#660000" opacity="0.3"/>
+  <rect x="310" y="180" width="70" height="50" rx="6" fill="#660000" opacity="0.3"/>
   
-  <!-- Ruedas -->
-  <circle cx="140" cy="350" r="30" fill="#2d2d2d"/>
-  <circle cx="140" cy="350" r="20" fill="#4a4a4a"/>
-  <circle cx="372" cy="350" r="30" fill="#2d2d2d"/>
-  <circle cx="372" cy="350" r="20" fill="#4a4a4a"/>
+  <!-- Parabrisas delantero -->
+  <path d="M 100 200 L 120 170 L 120 200 Z" fill="#660000" opacity="0.25"/>
+  
+  <!-- Ventana trasera -->
+  <path d="M 400 170 L 420 200 L 400 200 Z" fill="#660000" opacity="0.25"/>
+  
+  <!-- Línea divisoria horizontal (cintura del bus) -->
+  <rect x="80" y="260" width="360" height="4" fill="#660000"/>
+  
+  <!-- Puertas -->
+  <rect x="150" y="265" width="35" height="55" rx="4" fill="#660000" opacity="0.4"/>
+  <line x1="167" y1="270" x2="167" y2="315" stroke="#ffffff" stroke-width="2"/>
   
   <!-- Faros delanteros -->
-  <circle cx="420" cy="220" r="12" fill="#ffd700"/>
-  <circle cx="420" cy="260" r="12" fill="#ffd700"/>
+  <circle cx="90" cy="210" r="8" fill="#ffd700"/>
+  <circle cx="90" cy="250" r="8" fill="#ff6b6b"/>
   
-  <!-- Parachoques -->
-  <rect x="430" y="200" width="8" height="80" rx="4" fill="#c0c0c0"/>
+  <!-- Luces traseras -->
+  <circle cx="430" cy="210" r="8" fill="#ffd700"/>
+  <circle cx="430" cy="250" r="8" fill="#ff6b6b"/>
   
-  <!-- Detalles laterales -->
-  <rect x="80" y="240" width="352" height="4" fill="#722F37"/>
-  <rect x="80" y="280" width="352" height="4" fill="#722F37"/>
+  <!-- Ruedas -->
+  <circle cx="150" cy="340" r="40" fill="#2d2d2d"/>
+  <circle cx="150" cy="340" r="25" fill="#4a4a4a"/>
+  <circle cx="150" cy="340" r="10" fill="#666666"/>
+  
+  <circle cx="370" cy="340" r="40" fill="#2d2d2d"/>
+  <circle cx="370" cy="340" r="25" fill="#4a4a4a"/>
+  <circle cx="370" cy="340" r="10" fill="#666666"/>
+  
+  <!-- Guardabarros -->
+  <path d="M 110 320 Q 150 300 190 320" stroke="#c0c0c0" stroke-width="3" fill="none"/>
+  <path d="M 330 320 Q 370 300 410 320" stroke="#c0c0c0" stroke-width="3" fill="none"/>
+  
+  <!-- Espejo retrovisor -->
+  <rect x="95" y="195" width="8" height="3" fill="#4a4a4a"/>
+  <rect x="85" y="192" width="12" height="8" rx="2" fill="#c0c0c0"/>
+  <rect x="87" y="194" width="8" height="4" rx="1" fill="#660000" opacity="0.2"/>
+  
+  <!-- Manija de puerta -->
+  <rect x="180" y="285" width="15" height="3" rx="1.5" fill="#c0c0c0"/>
+  
+  <!-- Detalles de ventanas (marcos) -->
+  <rect x="130" y="180" width="70" height="50" rx="6" stroke="#c0c0c0" stroke-width="2" fill="none"/>
+  <rect x="220" y="180" width="70" height="50" rx="6" stroke="#c0c0c0" stroke-width="2" fill="none"/>
+  <rect x="310" y="180" width="70" height="50" rx="6" stroke="#c0c0c0" stroke-width="2" fill="none"/>
+  
+  <!-- Letrero "ESCOLAR" en el techo -->
+  <rect x="200" y="145" width="120" height="22" rx="6" fill="#ffd700"/>
+  <text x="260" y="161" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#660000" text-anchor="middle">ESCOLAR</text>
+  
+  <!-- Parachoques delantero -->
+  <rect x="75" y="315" width="10" height="8" rx="2" fill="#c0c0c0"/>
+  
+  <!-- Parachoques trasero -->
+  <rect x="435" y="315" width="10" height="8" rx="2" fill="#c0c0c0"/>
 </svg>
