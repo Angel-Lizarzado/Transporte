@@ -259,43 +259,59 @@ export default async function DashboardPage() {
       {/* Top cards */}
       <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
         <Card>
-          <CardHeader className="flex justify-between items-center pb-2">
-            <CardTitle className="text-sm font-medium">Representantes</CardTitle>
-            <Users className="h-5 w-5 text-accent dark:text-white" />
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium">Representantes</CardTitle>
+              <Users className="h-5 w-5 text-accent dark:text-white" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900 dark:text-white">{data.representativesCount}</div>
-            <Link href="/dashboard/representantes" className="text-xs text-accent dark:text-white hover:underline mt-1 block">Ver todos →</Link>
+            <div className="flex items-end justify-between">
+              <div className="text-2xl font-bold text-gray-900 dark:text-white">{data.representativesCount}</div>
+              <Link href="/dashboard/representantes" className="text-xs text-accent dark:text-white hover:underline">Ver todos →</Link>
+            </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex justify-between items-center pb-2">
-            <CardTitle className="text-sm font-medium">Niños</CardTitle>
-            <UserPlus className="h-5 w-5 text-accent dark:text-white" />
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium">Niños</CardTitle>
+              <UserPlus className="h-5 w-5 text-accent dark:text-white" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900 dark:text-white">{data.childrenCount}</div>
-            <div className="text-xs text-gray-500 dark:text-gray-300 mt-1">{data.activePassengers} activos</div>
-            <Link href="/dashboard/ninos" className="text-xs text-accent dark:text-white hover:underline mt-1 block">Ver todos →</Link>
+            <div className="flex items-end justify-between">
+              <div>
+                <div className="text-2xl font-bold text-gray-900 dark:text-white">{data.childrenCount}</div>
+                <div className="text-xs text-gray-500 dark:text-gray-300">{data.activePassengers} activos</div>
+              </div>
+              <Link href="/dashboard/ninos" className="text-xs text-accent dark:text-white hover:underline">Ver todos →</Link>
+            </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex justify-between items-center pb-2">
-            <CardTitle className="text-sm font-medium">Docentes</CardTitle>
-            <GraduationCap className="h-5 w-5 text-accent dark:text-white" />
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium">Docentes</CardTitle>
+              <GraduationCap className="h-5 w-5 text-accent dark:text-white" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900 dark:text-white">{data.teachersCount}</div>
-            <Link href="/dashboard/docentes" className="text-xs text-accent dark:text-white hover:underline mt-1 block">Ver todos →</Link>
+            <div className="flex items-end justify-between">
+              <div className="text-2xl font-bold text-gray-900 dark:text-white">{data.teachersCount}</div>
+              <Link href="/dashboard/docentes" className="text-xs text-accent dark:text-white hover:underline">Ver todos →</Link>
+            </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex justify-between items-center pb-2">
-            <CardTitle className="text-sm font-medium">Deuda total</CardTitle>
-            <DollarSign className="h-5 w-5 text-accent dark:text-white" />
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium">Deuda total</CardTitle>
+              <DollarSign className="h-5 w-5 text-accent dark:text-white" />
+            </div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-gray-900 dark:text-white">{formatCurrency(data.totalDebt, 'USD')}</div>
@@ -409,10 +425,10 @@ export default async function DashboardPage() {
                         {dayjs(log.executed_at).format('DD/MM/YYYY HH:mm')}
                       </span>
                       <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${log.status === 'success'
-                          ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                          : log.status === 'skipped'
-                            ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
-                            : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                        ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                        : log.status === 'skipped'
+                          ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
+                          : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
                         }`}>
                         {log.status.toUpperCase()}
                       </span>

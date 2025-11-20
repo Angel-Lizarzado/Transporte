@@ -169,18 +169,7 @@ export default function AjustesPage() {
             </p>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="theme">Tema</Label>
-            <Select
-              id="theme"
-              value={theme}
-              onChange={(e) => setTheme(e.target.value as 'light' | 'dark' | 'system')}
-            >
-              <option value="light">Claro</option>
-              <option value="dark">Oscuro</option>
-              <option value="system">Sistema</option>
-            </Select>
-          </div>
+
 
           <Button onClick={handleSave} disabled={saving}>
             {saving ? 'Guardando...' : 'Guardar Cambios'}
