@@ -397,14 +397,36 @@ export default async function DashboardPage() {
             <CardTitle>Últimos logs del CRON</CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-2 text-sm">
+            <div className="space-y-3">
               {data.cronLogs.map((log: any) => (
-                <li key={log.id} className="text-gray-700 dark:text-gray-200">
-                  <div className="font-medium">{dayjs(log.executed_at).format('DD/MM/YYYY HH:mm')}</div>
-                  <div className="truncate text-xs">{log.status.toUpperCase()} — {log.result}</div>
-                </li>
+                <div
+                  key={log.id}
+                  className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800/50"
+                >
+                  <div className="flex items-start justify-between gap-3 mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                        {dayjs(log.executed_at).format('DD/MM/YYYY HH:mm')}
+                      </span>
+                      <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${log.status === 'success'
+                          ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                          : log.status === 'skipped'
+                            ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
+                            : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                        }`}>
+                        {log.status.toUpperCase()}
+                      </span>
+                    </div>
+                  </div>
+                  <pre className="text-xs text-gray-700 dark:text-gray-300 whitespace-pre-wrap font-mono bg-white dark:bg-gray-900 p-3 rounded border border-gray-200 dark:border-gray-700 overflow-x-auto">{log.result}</pre>
+                </div>
               ))}
-            </ul>
+              {data.cronLogs.length === 0 && (
+                <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
+                  No hay logs del CRON disponibles
+                </p>
+              )}
+            </div>
           </CardContent>
         </Card>
       </section>
