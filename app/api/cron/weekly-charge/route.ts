@@ -126,14 +126,15 @@ Estado final: ⏭ Saltado
           total += Number(rate);
 
           // Crear transacción
+          // Para docentes sin representante, usar su propio ID de pasajero
           await supabase.from("transactions").insert({
             id: crypto.randomUUID(),
             organization_id: orgId,
-            representante_id: p.representante_id,
+            representante_id: p.representante_id ?? p.id, // Use passenger ID for teachers
             fecha: new Date().toISOString(),
             tipo: "cargo",
             monto_usd: rate,
-            concepto: `Cargo semanal para ${p.nombre}`,
+            concepto: `Cargo semanal para ${p.nombre} - ${dayjs().format('DD/MM/YYYY')}`,
             created_by: org.created_by,
           });
 
