@@ -55,7 +55,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       if (data?.dollar_rate) setRate(data.dollar_rate)
     }
     loadRate()
-  }, [])
+  }, [supabase])
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -198,7 +198,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
       {/* --- FOOTER --- */}
       <footer className="text-center py-4 text-sm text-gray-600 dark:text-gray-400 mt-8">
-        Sistema de Transporte Escolar · <span className="font-bold text-[#660000]">2025</span>
+        Desarrollado con ❤️ por <span className="font-semibold text-vinotinto dark:text-white">Angel Lizarzado</span> · 2025
       </footer>
     </div>
   )
