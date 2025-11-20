@@ -47,7 +47,7 @@ export function TopDebtors({ debtors }: TopDebtorsProps) {
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-vinotinto dark:bg-vinotinto-600 text-white text-sm font-bold">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-vinotinto dark:bg-white text-white dark:text-gray-900 text-sm font-bold">
                     {index + 1}
                   </div>
                   <div>
